@@ -212,7 +212,7 @@ int32_t bigg::Application::runApiThread(bx::Thread *self, void *userData) {
         app->render(dt);
 
         ImGui::Render();
-        imguiRender(ImGui::GetDrawData());        
+        imguiRender(ImGui::GetDrawData());
         bgfx::frame();
     }
     int ret = app->shutdown();
@@ -289,12 +289,11 @@ int bigg::Application::run(int argc, char **argv, bgfx::RendererType::Enum type,
     // Setup ImGui
     // imguiInit(mWindow);
 
-    // Initialize the application on the render thread   
+    // Initialize the application on the render thread
     reset();
-    addRenderFunction([argc,argv](Application::Event& event){
+    addRenderFunction([argc, argv](Application::Event &event) {
         event.app->initialize(argc, argv);
     });
-    
 
     // Loop until the user closes the window
     float lastTime = 0;
@@ -319,6 +318,10 @@ int bigg::Application::run(int argc, char **argv, bgfx::RendererType::Enum type,
     // Shutdown application and glfw
     // int ret = shutdown();
     setIsRunning(false);
+    // Wait for the API thread to finish before shutting down.
+    while (bgfx::RenderFrame::NoContext != bgfx::renderFrame()) {
+    }
+
     // imguiShutdown();
     // bgfx::shutdown();
     glfwTerminate();
