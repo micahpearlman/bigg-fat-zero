@@ -98,7 +98,7 @@ class Application {
 
     bool isRunning() { return mIsRunning; }
 
-    bool addRenderFunction(std::function<void(Event &)> func,
+    void addRenderFunction(std::function<void(Event &)> func,
                            std::any                     user_data = nullptr) {
         auto event = new Event();
         event->delegate = func;
