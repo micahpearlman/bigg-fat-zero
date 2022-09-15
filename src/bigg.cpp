@@ -202,7 +202,7 @@ int32_t bigg::Application::runApiThread(bx::Thread *self, void *userData) {
 
         // This dummy draw call is here to make sure that view 0 is cleared if
         // no other draw calls are submitted to view 0.
-        bgfx::touch(0);
+        bgfx::touch(app->kMainDisplayViewId);
 
         // Advance to next frame. Main thread will be kicked to process
         // submitted rendering primitives.
@@ -264,7 +264,6 @@ int bigg::Application::run(int argc, char **argv, bgfx::RendererType::Enum type,
 #elif BX_PLATFORM_WINDOWS
     platformData.nwh = glfwGetWin32Window(mWindow);
 #endif // BX_PLATFORM_
-    // bgfx::setPlatformData(platformData);
 
     // Init bgfx
     bgfx::Init init;
@@ -278,16 +277,13 @@ int bigg::Application::run(int argc, char **argv, bgfx::RendererType::Enum type,
     init.resolution.height = getHeight();
     init.resolution.reset = BGFX_RESET_VSYNC;
 
+
+    // setup a bgfx render thread separate from the "main" thread
     bx::Thread    apiThread;
     ApiThreadArgs args;
     args.init = init;
     args.app = this;
     apiThread.init(runApiThread, &args);
-
-    // bgfx::init(init);
-
-    // Setup ImGui
-    // imguiInit(mWindow);
 
     // Initialize the application on the render thread
     reset();
@@ -305,13 +301,11 @@ int bigg::Application::run(int argc, char **argv, bgfx::RendererType::Enum type,
         lastTime = time;
 
         glfwPollEvents();
-        // imguiEvents(dt);
-        // ImGui::NewFrame();
-        update(dt);
-        // ImGui::Render();
-        // imguiRender(ImGui::GetDrawData());
-        // bgfx::frame();
 
+        // update the application
+        update(dt);
+
+        // tick the bgfx thread to render
         bgfx::renderFrame();
     }
 

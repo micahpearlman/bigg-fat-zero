@@ -69,16 +69,17 @@ class Application {
             uint16_t vendorId = BGFX_PCI_ID_NONE, uint16_t deviceId = 0,
             bgfx::CallbackI *callback = NULL, bx::AllocatorI *allocator = NULL);
 
-    void        reset(uint32_t flags = 0);
-    uint32_t    getWidth() const;
-    uint32_t    getHeight() const;
-    void        setSize(int width, int height);
-    const char *getTitle() const;
-    void        setTitle(const char *title);
-    bool        isKeyDown(int key) const;
-    bool        isMouseButtonDown(int button) const;
-    float       getMouseWheelH() const;
-    float       getMouseWheel() const;
+    void         reset(uint32_t flags = 0);
+    uint32_t     getWidth() const;
+    uint32_t     getHeight() const;
+    void         setSize(int width, int height);
+    const char  *getTitle() const;
+    void         setTitle(const char *title);
+    bool         isKeyDown(int key) const;
+    bool         isMouseButtonDown(int button) const;
+    float        getMouseWheelH() const;
+    float        getMouseWheel() const;
+    bgfx::ViewId getMainDisplayViewId() const { return kMainDisplayViewId; }
 
     virtual void initialize(int _argc, char **_argv){};
     virtual void update(float dt){};
@@ -115,13 +116,14 @@ class Application {
     GLFWwindow *window() { return mWindow; }
 
   private:
-    uint32_t    mReset;
-    uint32_t    mWidth;
-    uint32_t    mHeight;
-    const char *mTitle;
-    float       mMouseWheelH = 0.0f;
-    float       mMouseWheel = 0.0f;
-    bool        mIsRunning = true;
+    uint32_t           mReset;
+    uint32_t           mWidth;
+    uint32_t           mHeight;
+    const char        *mTitle;
+    float              mMouseWheelH = 0.0f;
+    float              mMouseWheel = 0.0f;
+    bool               mIsRunning = true;
+    const bgfx::ViewId kMainDisplayViewId = 0;
 
     static bx::DefaultAllocator                        s_allocator;
     static bx::SpScUnboundedQueueT<Application::Event> s_apiThreadEvents;
