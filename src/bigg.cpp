@@ -191,6 +191,11 @@ int32_t bigg::Application::runApiThread(bx::Thread *self, void *userData) {
         dt = time - lastTime;
         lastTime = time;
 
+        // app->postRender(dt);
+
+        // bgfx::setViewFrameBuffer(app->kMainDisplayViewId, BGFX_INVALID_HANDLE);
+        // bgfx::frame();
+
         // Handle events from the main thread.
         while (auto event = bigg::Application::s_apiThreadEvents.pop()) {
             if (event->delegate != nullptr) {
@@ -208,12 +213,14 @@ int32_t bigg::Application::runApiThread(bx::Thread *self, void *userData) {
         // submitted rendering primitives.
         imguiEvents(dt);
         ImGui::NewFrame();
-
         app->render(dt);
-
         ImGui::Render();
-        imguiRender(ImGui::GetDrawData());
-        bgfx::frame();
+        imguiRender(ImGui::GetDrawData());        
+        app->mCurrentFrame = bgfx::frame();
+
+        app->postRender(dt);
+
+
     }
     int ret = app->shutdown();
     imguiShutdown();

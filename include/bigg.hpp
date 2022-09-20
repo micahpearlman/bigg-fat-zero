@@ -84,6 +84,7 @@ class Application {
     virtual void initialize(int _argc, char **_argv){};
     virtual void update(float dt){};
     virtual void render(float dt){};
+    virtual void postRender(float dt) {}
     virtual int  shutdown() { return 0; };
 
     virtual void onReset(){};
@@ -97,7 +98,9 @@ class Application {
     virtual void onDrop(int count, const char **paths) {}
     virtual void onWindowSize(int width, int height) {}
 
-    bool isRunning() { return mIsRunning; }
+    bool isRunning() const { return mIsRunning; }
+
+    uint32_t currentFrame() const { return mCurrentFrame; }
 
     void addRenderFunction(std::function<void(Event &)> func,
                            std::any                     user_data = nullptr) {
@@ -124,6 +127,7 @@ class Application {
     float              mMouseWheel = 0.0f;
     bool               mIsRunning = true;
     const bgfx::ViewId kMainDisplayViewId = 0;
+    uint32_t           mCurrentFrame = -1;
 
     static bx::DefaultAllocator                        s_allocator;
     static bx::SpScUnboundedQueueT<Application::Event> s_apiThreadEvents;
